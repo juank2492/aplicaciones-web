@@ -1,0 +1,92 @@
+@model IEnumerable<TareaCRUD.Models.Cliente>
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="row">
+    <div class="col s12">
+        <a class="btn waves-effect waves-light" asp-action="Create">Nuevo Cliente</a>
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+                        <td>@item.Email</td>
+                        <td>
+                            <a href="#editModal" class="btn-small waves-effect waves-light modal-trigger edit-button" data-id="@item.Id" data-nombre="@item.Nombre" data-email="@item.Email">Editar</a>
+                            <a href="#deleteModal" class="btn-small red modal-trigger delete-button" data-id="@item.Id" data-nombre="@item.Nombre">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h4>Editar Cliente</h4>
+        <form asp-action="Edit" method="post">
+            <input type="hidden" id="edit-id" name="Id" />
+            <div class="input-field">
+                <input id="edit-nombre" name="Nombre" type="text" required>
+                <label for="edit-nombre" class="active">Nombre</label>
+            </div>
+            <div class="input-field">
+                <input id="edit-email" name="Email" type="email" required>
+                <label for="edit-email" class="active">Email</label>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="modal-close waves-effect waves-green btn">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h4>Eliminar Cliente</h4>
+        <p id="delete-message"></p>
+    </div>
+    <div class="modal-footer">
+        <form asp-action="Delete" method="post">
+            <input type="hidden" id="delete-id" name="id" />
+            <button type="submit" class="modal-close waves-effect waves-red btn red">Eliminar</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.modal');
+        M.Modal.init(elems);
+
+        document.querySelectorAll('.edit-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('edit-id').value = this.dataset.id;
+                document.getElementById('edit-nombre').value = this.dataset.nombre;
+                document.getElementById('edit-email').value = this.dataset.email;
+                M.updateTextFields();
+            });
+        });
+
+        document.querySelectorAll('.delete-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('delete-id').value = this.dataset.id;
+                document.getElementById('delete-message').innerText = '¿Eliminar a ' + this.dataset.nombre + '?';
+            });
+        });
+    });
+</script>
+}
